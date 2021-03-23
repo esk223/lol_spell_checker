@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class Position(Enum):
-    TOP = 1
-    JGL = 2
-    MID = 3
-    ADC = 4
-    SUP = 5
+    TOP = 0
+    JGL = 1
+    MID = 2
+    ADC = 3
+    SUP = 4

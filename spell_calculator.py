@@ -1,3 +1,5 @@
+import pyautogui
+
 GHOST = 210
 HEAL = 240
 TELEPORT = 420      # if level 1 420, else 420 - 10*level
@@ -13,7 +15,11 @@ RUNE = 15.3         # skill acceleration +18
 
 class SpellCalculator:
     def __init__(self):
-        pass
+        self.spell_log_list = []
 
     def spell_used(self, position, spell_num):
         pass
+
+    def type_spell_log(self):
+        pyautogui.typewrite('"support gap"')
+        pyautogui.typewrite(['enter'])
