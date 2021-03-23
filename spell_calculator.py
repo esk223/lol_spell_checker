@@ -11,6 +11,9 @@ BOOTS = 10.7        # skill acceleration +12
 RUNE = 15.3         # skill acceleration +18
 
 
-class SpellCalculator():
+class SpellCalculator:
     def __init__(self):
+        pass
+
+    def spell_used(self, position, spell_num):
         pass
