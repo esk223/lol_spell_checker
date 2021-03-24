@@ -21,7 +21,8 @@ class SpellCalculator:
         self.spell_log_list = [-1]*10
 
     def game_start(self):
-        self.start_time = time.time()
+        if self.start_time == 0:
+            self.start_time = time.time()
 
     def spell_used(self, position):
         idx = position.value
@@ -32,6 +33,24 @@ class SpellCalculator:
             self.spell_log_list[idx] = -1
         print(self.spell_log_list)
 
+    def time_convert(self, second):
+        minute = second // 60
+        second = second % 60
+        return "{0:0>2}{1:0>2}".format(minute, second)
+
     def type_spell_log(self):
-        pyautogui.typewrite('"support gap"')
+        list_for_text = []
+        for i, t in enumerate(self.spell_log_list):
+            if t == -1:
+                continue
+            else:
+                t_i_pair = (t, str(Position(i)).strip("Position."))
+                list_for_text.append(t_i_pair)
+        list_for_text.sort()
+
+        text = ""
+        for l in list_for_text:
+            text += l[1] + " " + self.time_convert(l[0]) + " / "
+
+        pyautogui.typewrite("{0}".format(text))
         pyautogui.typewrite(['enter'])
