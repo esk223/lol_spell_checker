@@ -1,37 +1,44 @@
 import time
 import pyautogui
-from enum import Enum
 from position import Position
 
 
-class Cooldown(Enum):
-    GHOST = 210
-    HEAL = 240
-    TELEPORT = 420      # if level 1 420, else 420 - 10*level
-    CLEANSE = 210
-    BARRIER = 180
-    IGNITE = 180
-    EXHAUST = 210
-    FLASH = 300
+spell_dict = {
+    "SMITE": 15,
+    "GHOST": 210,
+    "HEAL": 240,
+    "TELEPORT": 420,      # if level 1 420, else 420 - 10*level
+    "CLEANSE": 210,
+    "BARRIER": 180,
+    "IGNITE": 180,
+    "EXHAUST": 210,
+    "FLASH": 300,
+}
 
-    BOOTS = 10.7        # skill acceleration +12
-    RUNE = 15.3         # skill acceleration +18
+# BOOTS = 10.7  # skill acceleration +12
+# RUNE = 15.3  # skill acceleration +18
 
 
 class SpellCalculator:
     def __init__(self):
         self.start_time = 0
         self.spell_log_list = [-1]*10
-        # self.spell_list = []
+        self.spell_list = [
+            "FLASH", "FLASH", "FLASH", "FLASH", "FLASH", "TELEPORT", "SMITE", "IGNITE", "HEAL", "IGNITE"
+        ]
 
     def game_start(self):
         if self.start_time == 0:
             self.start_time = time.time()
 
+    def change_spell(self, position, spell):
+        self.spell_list[position.value] = spell
+
     def spell_used(self, position):
         idx = position.value
-        spell_on_time = int(time.time() - self.start_time) + 300    # should be modified
-        if spell_on_time - self.spell_log_list[idx] < 5:    # re-hit the same macro in 5 seconds, cancel it
+        cooldown = spell_dict[self.spell_list[idx]]
+        spell_on_time = int(time.time() - self.start_time + cooldown)
+        if spell_on_time - self.spell_log_list[idx] < 5:    # if re-hit the same macro in 5 seconds, cancel it
             self.spell_log_list[idx] = -1
         else:
             self.spell_log_list[idx] = spell_on_time
@@ -51,13 +58,15 @@ class SpellCalculator:
             elif cur_time >= t:
                 continue
             else:
-                t_i_pair = (t, str(Position(i)).strip("Position.")) # should be modified
-                list_for_text.append(t_i_pair)
+                position_str = str(Position(i)).strip("Position.")[:-1]
+                spell_str = self.spell_list[i]
+                info_tuple = (t, position_str, spell_str)
+                list_for_text.append(info_tuple)
         list_for_text.sort()
 
         text = ""
         for info in list_for_text:
-            text += info[1] + " " + self.time_convert(info[0]) + " / "
+            text += "{0} {1} {2} / ".format(info[1], info[2], self.time_convert(info[0]))
         text = text.rstrip(" / ")
 
         pyautogui.typewrite("{0}".format(text))
