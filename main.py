@@ -9,12 +9,12 @@ TRIGGER_KEYS = {
     'spell_used(Position.TOP1)': KeyCode(char='\x01'),     # Ctrl+A
     'spell_used(Position.JGL1)': KeyCode(char='\x13'),     # Ctrl+S
     'spell_used(Position.MID1)': KeyCode(char='\x04'),     # Ctrl+D
-    'spell_used(Position.ADC1)': KeyCode(char='\x06'),     # Ctrl+F
+    'spell_used(Position.BOT1)': KeyCode(char='\x06'),     # Ctrl+F
     'spell_used(Position.SUP1)': KeyCode(char='\x07'),     # Ctrl+G
     'spell_used(Position.TOP2)': KeyCode(char='\x1a'),     # Ctrl+Z
     'spell_used(Position.JGL2)': KeyCode(char='\x18'),     # Ctrl+X
     'spell_used(Position.MID2)': KeyCode(char='\x03'),     # Ctrl+C
-    'spell_used(Position.ADC2)': KeyCode(char='\x16'),     # Ctrl+V
+    'spell_used(Position.BOT2)': KeyCode(char='\x16'),     # Ctrl+V
     'spell_used(Position.SUP2)': KeyCode(char='\x02'),     # Ctrl+B
     'spell_log': Key.f8
 }
