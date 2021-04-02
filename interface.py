@@ -40,7 +40,6 @@ class SpellCheckWidget(QWidget):
 
     def add_label(self, layout, text, x, y):
         label = QLabel(text, self)
-        label.setAlignment(Qt.AlignCenter)
         label.setStyleSheet("color: white;")
         label_font = label.font()
         label_font.setFamily('Bahnschrift Condensed')
@@ -49,9 +48,8 @@ class SpellCheckWidget(QWidget):
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
     def add_image(self, layout, img_name, x, y):
-        pixmap = QPixmap('image/' + img_name)
         label = QLabel()
-        label.setPixmap(pixmap)
+        label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
 
