@@ -26,6 +26,8 @@ class SpellCalculator:
         self.spell_list = [
             "FLASH", "FLASH", "FLASH", "FLASH", "FLASH", "TELEPORT", "SMITE", "IGNITE", "HEAL", "IGNITE"
         ]
+        self.rune_list = [False] * 5
+        self.boots_list = [False] * 5
 
     def game_start(self):
         if self.start_time == 0:
@@ -37,6 +39,14 @@ class SpellCalculator:
     def spell_used(self, position):
         idx = position.value
         cooldown = spell_dict[self.spell_list[idx]]
+
+        skill_acc = 0
+        if self.rune_list[idx % 5]:
+            skill_acc += 18
+        if self.boots_list[idx % 5]:
+            skill_acc += 12
+        cooldown = cooldown * 100 / (100+skill_acc)
+
         spell_on_time = int(time.time() - self.start_time + cooldown)
         if spell_on_time - self.spell_log_list[idx] < 5:    # if re-hit the same macro in 5 seconds, cancel it
             self.spell_log_list[idx] = -1

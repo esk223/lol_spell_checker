@@ -29,7 +29,8 @@ class SpellCheckWidget(QWidget):
         self.add_image(grid, 'bot.png', 4, 0)
         self.add_image(grid, 'sup.png', 5, 0)
 
-        self.add_image(grid, 'rune_off.png', 1, 3)
+        for i in range(1, 6):
+            self.add_rune_label(grid, i, 3)
         self.show()
 
     def center(self):
@@ -51,6 +52,24 @@ class SpellCheckWidget(QWidget):
         label = QLabel()
         label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
+
+    def add_rune_label(self, layout, x, y):
+        label = RuneQLabel()
+        label.setPixmap(QPixmap('image/rune_off.png'))
+        layout.addWidget(label, x, y, Qt.AlignCenter)
+
+
+class RuneQLabel(QLabel):
+    def __init__(self):
+        super().__init__()
+        self.rune_on = False
+
+    def mousePressEvent(self, event):
+        if self.rune_on:
+            self.setPixmap(QPixmap('image/rune_off.png'))
+        else:
+            self.setPixmap(QPixmap('image/rune_on.png'))
+        self.rune_on = not self.rune_on
 
 
 if __name__ == "__main__":
