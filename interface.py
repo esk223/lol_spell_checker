@@ -1,7 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QGridLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QDesktopWidget, QGridLayout, QLabel
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
+
+
+initial_spell = ["flash", "flash", "flash", "flash", "flash", "teleport", "smite", "ignite", "heal", "exhaust"]
 
 
 class SpellCheckWidget(QWidget):
@@ -25,11 +28,16 @@ class SpellCheckWidget(QWidget):
         self.add_text(grid, 'SPELL 2', 0, 2)
         self.add_text(grid, 'RUNE', 0, 3)
 
-        self.add_image(grid, 'top.png', 1, 0)
-        self.add_image(grid, 'jgl.png', 2, 0)
-        self.add_image(grid, 'mid.png', 3, 0)
-        self.add_image(grid, 'bot.png', 4, 0)
-        self.add_image(grid, 'sup.png', 5, 0)
+        self.add_image(grid, 'lane/top.png', 1, 0)
+        self.add_image(grid, 'lane/jgl.png', 2, 0)
+        self.add_image(grid, 'lane/mid.png', 3, 0)
+        self.add_image(grid, 'lane/bot.png', 4, 0)
+        self.add_image(grid, 'lane/sup.png', 5, 0)
+
+        for i in range(10):
+            spell_label = SpellQLabel(initial_spell[i])
+            self.spell_list.append(spell_label)
+            grid.addWidget(spell_label, i%5 + 1, i//5 + 1, Qt.AlignCenter)
 
         for i in range(1, 6):
             rune_label = RuneQLabel()
@@ -57,22 +65,31 @@ class SpellCheckWidget(QWidget):
         label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
-    # def add_rune_label(self, rune_label, layout, x, y):
-    #     label.setPixmap(QPixmap('image/rune_off.png'))
-    #     layout.addWidget(label, x, y, Qt.AlignCenter)
+
+class SpellQLabel(QLabel):
+    def __init__(self, init_spell):
+        super().__init__()
+        self.spell = init_spell
+        self.setPixmap(QPixmap('image/spell/' + init_spell + '.png'))
+
+    def mousePressEvent(self, event):
+        pass
+
+    def spell_status(self):
+        return self.spell
 
 
 class RuneQLabel(QLabel):
     def __init__(self):
         super().__init__()
         self.rune_on = False
-        self.setPixmap(QPixmap('image/rune_off.png'))
+        self.setPixmap(QPixmap('image/rune/rune_off.png'))
 
     def mousePressEvent(self, event):
         if self.rune_on:
-            self.setPixmap(QPixmap('image/rune_off.png'))
+            self.setPixmap(QPixmap('image/rune/rune_off.png'))
         else:
-            self.setPixmap(QPixmap('image/rune_on.png'))
+            self.setPixmap(QPixmap('image/rune/rune_on.png'))
         self.rune_on = not self.rune_on
 
     def rune_status(self):

@@ -21,7 +21,7 @@ class SpellCalculator:
         self.start_time = time.time()
         self.spell_log_list = [-1] * 10
         self.spell_list = [
-            "FLASH", "FLASH", "FLASH", "FLASH", "FLASH", "TELEPORT", "SMITE", "IGNITE", "HEAL", "IGNITE"
+            "FLASH", "FLASH", "FLASH", "FLASH", "FLASH", "TELEPORT", "SMITE", "IGNITE", "HEAL", "EXHAUST"
         ]
         self.rune_list = [False] * 5
         self.boots_list = [False] * 5
