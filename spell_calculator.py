@@ -15,23 +15,23 @@ spell_dict = {
     "FLASH": 300,
 }
 
-# BOOTS = 10.7  # skill acceleration +12
-# RUNE = 15.3  # skill acceleration +18
-
 
 class SpellCalculator:
     def __init__(self):
-        self.start_time = 0
-        self.spell_log_list = [-1]*10
+        self.start_time = time.time()
+        self.spell_log_list = [-1] * 10
         self.spell_list = [
             "FLASH", "FLASH", "FLASH", "FLASH", "FLASH", "TELEPORT", "SMITE", "IGNITE", "HEAL", "IGNITE"
         ]
         self.rune_list = [False] * 5
         self.boots_list = [False] * 5
 
-    def game_start(self):
-        if self.start_time == 0:
-            self.start_time = time.time()
+    def initialize(self):
+        self.start_time = time.time()
+        self.spell_log_list = [-1] * 10
+        # self.spell_list
+        # self.rune_list
+        self.boots_list = [False] * 5
 
     def change_spell(self, position, spell):
         self.spell_list[position.value] = spell

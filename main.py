@@ -21,7 +21,7 @@ TRIGGER_KEYS = {
 
 
 def game_start():
-    sc.game_start()
+    sc.initialize()
 
 
 def spell_used(position):
