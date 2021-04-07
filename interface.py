@@ -7,6 +7,8 @@ from PyQt5.QtCore import Qt
 class SpellCheckWidget(QWidget):
     def __init__(self):
         super().__init__()
+        self.spell_list = []
+        self.rune_list = []
         self.init_ui()
 
     def init_ui(self):
@@ -19,9 +21,9 @@ class SpellCheckWidget(QWidget):
         grid = QGridLayout()
         self.setLayout(grid)
 
-        self.add_label(grid, 'SPELL 1', 0, 1)
-        self.add_label(grid, 'SPELL 2', 0, 2)
-        self.add_label(grid, 'RUNE', 0, 3)
+        self.add_text(grid, 'SPELL 1', 0, 1)
+        self.add_text(grid, 'SPELL 2', 0, 2)
+        self.add_text(grid, 'RUNE', 0, 3)
 
         self.add_image(grid, 'top.png', 1, 0)
         self.add_image(grid, 'jgl.png', 2, 0)
@@ -30,7 +32,9 @@ class SpellCheckWidget(QWidget):
         self.add_image(grid, 'sup.png', 5, 0)
 
         for i in range(1, 6):
-            self.add_rune_label(grid, i, 3)
+            rune_label = RuneQLabel()
+            self.rune_list.append(rune_label)
+            grid.addWidget(rune_label, i, 3, Qt.AlignCenter)
         self.show()
 
     def center(self):
@@ -39,7 +43,7 @@ class SpellCheckWidget(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def add_label(self, layout, text, x, y):
+    def add_text(self, layout, text, x, y):
         label = QLabel(text, self)
         label.setStyleSheet("color: white;")
         label_font = label.font()
@@ -53,16 +57,16 @@ class SpellCheckWidget(QWidget):
         label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
-    def add_rune_label(self, layout, x, y):
-        label = RuneQLabel()
-        label.setPixmap(QPixmap('image/rune_off.png'))
-        layout.addWidget(label, x, y, Qt.AlignCenter)
+    # def add_rune_label(self, rune_label, layout, x, y):
+    #     label.setPixmap(QPixmap('image/rune_off.png'))
+    #     layout.addWidget(label, x, y, Qt.AlignCenter)
 
 
 class RuneQLabel(QLabel):
     def __init__(self):
         super().__init__()
         self.rune_on = False
+        self.setPixmap(QPixmap('image/rune_off.png'))
 
     def mousePressEvent(self, event):
         if self.rune_on:
@@ -70,6 +74,9 @@ class RuneQLabel(QLabel):
         else:
             self.setPixmap(QPixmap('image/rune_on.png'))
         self.rune_on = not self.rune_on
+
+    def rune_status(self):
+        return self.rune_on
 
 
 if __name__ == "__main__":
