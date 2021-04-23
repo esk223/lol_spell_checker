@@ -4,7 +4,8 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 
 
-initial_spell = ["flash", "flash", "flash", "flash", "flash", "teleport", "smite", "ignite", "heal", "exhaust"]
+INITIAL_SPELL = ["flash", "flash", "flash", "flash", "flash", "teleport", "smite", "ignite", "heal", "exhaust"]
+SPELL_LIST = ["flash", "ghost", "teleport", "smite", "ignite", "heal", "cleanse", "barrier", "exhaust"]
 
 
 class SpellCheckWidget(QWidget):
@@ -16,7 +17,7 @@ class SpellCheckWidget(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('LOL SpellTimer')
-        self.setWindowIcon(QIcon('image/spell.webp'))
+        self.setWindowIcon(QIcon('image/icon.webp'))
         self.setFixedSize(450, 450)
         self.center()
         self.setStyleSheet("background-color: #060A33;")
@@ -35,7 +36,7 @@ class SpellCheckWidget(QWidget):
         self.add_image(grid, 'lane/sup.png', 5, 0)
 
         for i in range(10):
-            spell_label = SpellQLabel(initial_spell[i])
+            spell_label = SpellQLabel(INITIAL_SPELL[i])
             self.spell_list.append(spell_label)
             grid.addWidget(spell_label, i%5 + 1, i//5 + 1, Qt.AlignCenter)
 
@@ -66,19 +67,6 @@ class SpellCheckWidget(QWidget):
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
 
-class SpellQLabel(QLabel):
-    def __init__(self, init_spell):
-        super().__init__()
-        self.spell = init_spell
-        self.setPixmap(QPixmap('image/spell/' + init_spell + '.png'))
-
-    def mousePressEvent(self, event):
-        pass
-
-    def spell_status(self):
-        return self.spell
-
-
 class RuneQLabel(QLabel):
     def __init__(self):
         super().__init__()
@@ -96,7 +84,63 @@ class RuneQLabel(QLabel):
         return self.rune_on
 
 
+class SpellQLabel(QLabel):
+    def __init__(self, init_spell):
+        super().__init__()
+        self.setMouseTracking(True)
+        self.set_spell(init_spell)
+
+    def set_spell(self, spell):
+        self.spell = spell
+        self.setPixmap(QPixmap('image/spell/' + spell + '.png'))
+
+    def mousePressEvent(self, event):
+        self.spell_window = SpellSelectWidget(self, event.globalX(), event.globalY())
+        self.spell_window.show()
+
+    def spell_status(self):
+        return self.spell
+
+
+class SpellSelectWidget(QWidget):
+    def __init__(self, spell_qlabel, x, y):
+        super().__init__()
+        self.spell_qlabel = spell_qlabel
+        self.init_ui(x, y)
+
+    def init_ui(self, x, y):
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setFixedSize(160, 160)
+        # self.setStyleSheet("")
+        self.setStyleSheet("background-color: #34495E;")
+        self.move(x, y)
+
+        grid = QGridLayout()
+        self.setLayout(grid)
+
+        for i in range(9):
+            spell_label = SpellSelectQLabel(self, SPELL_LIST[i])
+            grid.addWidget(spell_label, i//3, i%3, Qt.AlignCenter)
+        self.show()
+
+    def change_spell(self, spell):
+        self.spell_qlabel.set_spell(spell)
+        self.close()
+
+
+class SpellSelectQLabel(QLabel):
+    def __init__(self, spell_widget, spell):
+        super().__init__()
+        self.spell_widget = spell_widget
+        self.spell = spell
+        self.setPixmap(QPixmap('image/spell/' + spell + '.png'))
+
+    def mousePressEvent(self, event):
+        self.spell_widget.change_spell(self.spell)
+
+
 if __name__ == "__main__":
     q_app = QApplication(sys.argv)
-    spell_widget = SpellCheckWidget()
+    main_window = SpellCheckWidget()
+    main_window.show()
     sys.exit(q_app.exec_())
