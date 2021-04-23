@@ -36,7 +36,7 @@ class SpellCheckWidget(QWidget):
         self.add_image(grid, 'lane/sup.png', 5, 0)
 
         for i in range(10):
-            spell_label = SpellQLabel(INITIAL_SPELL[i])
+            spell_label = SpellQLabel(self, i, INITIAL_SPELL[i])
             self.spell_list.append(spell_label)
             grid.addWidget(spell_label, i%5 + 1, i//5 + 1, Qt.AlignCenter)
 
@@ -66,6 +66,13 @@ class SpellCheckWidget(QWidget):
         label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
+    def change_spell(self, i, new_spell):
+        old_spell = self.spell_list[i].current_spell()
+        pair_spell_label = self.spell_list[(i+5) % 10]
+        if pair_spell_label.current_spell() == new_spell:
+            pair_spell_label.set_spell(old_spell)
+        self.spell_list[i].set_spell(new_spell)
+
 
 class RuneQLabel(QLabel):
     def __init__(self):
@@ -85,8 +92,10 @@ class RuneQLabel(QLabel):
 
 
 class SpellQLabel(QLabel):
-    def __init__(self, init_spell):
+    def __init__(self, main_widget, idx, init_spell):
         super().__init__()
+        self.main_widget = main_widget
+        self.idx = idx
         self.setMouseTracking(True)
         self.set_spell(init_spell)
 
@@ -94,11 +103,14 @@ class SpellQLabel(QLabel):
         self.spell = spell
         self.setPixmap(QPixmap('image/spell/' + spell + '.png'))
 
+    def change_spell(self, new_spell):
+        self.main_widget.change_spell(self.idx, new_spell)
+
     def mousePressEvent(self, event):
         self.spell_window = SpellSelectWidget(self, event.globalX(), event.globalY())
         self.spell_window.show()
 
-    def spell_status(self):
+    def current_spell(self):
         return self.spell
 
 
@@ -111,20 +123,18 @@ class SpellSelectWidget(QWidget):
     def init_ui(self, x, y):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setFixedSize(160, 160)
-        # self.setStyleSheet("")
         self.setStyleSheet("background-color: #34495E;")
         self.move(x, y)
 
         grid = QGridLayout()
         self.setLayout(grid)
-
         for i in range(9):
             spell_label = SpellSelectQLabel(self, SPELL_LIST[i])
             grid.addWidget(spell_label, i//3, i%3, Qt.AlignCenter)
         self.show()
 
-    def change_spell(self, spell):
-        self.spell_qlabel.set_spell(spell)
+    def change_spell(self, new_spell):
+        self.spell_qlabel.change_spell(new_spell)
         self.close()
 
 
