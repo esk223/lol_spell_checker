@@ -68,8 +68,12 @@ class MainWindow(QWidget):
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
     def open_sub_window(self, i):
-        self.sub_window = SubWindow(self, i)
-        # self.sub_window.show()
+        if self.sub_window is None:
+            self.sub_window = SubWindow(self, i)
+            self.sub_window.show()
+        else:
+            self.sub_window.close()
+            self.sub_window = None
 
     def change_spell(self, i, new_spell):
         old_spell = self.spell_list[i].get_spell()
@@ -77,6 +81,8 @@ class MainWindow(QWidget):
         if pair_spell_label.get_spell() == new_spell:
             pair_spell_label.set_spell(old_spell)
         self.spell_list[i].set_spell(new_spell)
+        self.sub_window.close()
+        self.sub_window = None
 
 
 class RuneQLabel(QLabel):
@@ -132,7 +138,6 @@ class SubWindow(QWidget):
         for i in range(9):
             spell_label = SpellSubQLabel(self, SPELL_LIST[i])
             grid.addWidget(spell_label, i // 3, i % 3, Qt.AlignCenter)
-        self.show()
 
     def move_ui(self):
         main_pos = self.main_window.pos()
@@ -142,7 +147,6 @@ class SubWindow(QWidget):
 
     def change_spell(self, new_spell):
         self.main_window.change_spell(self.idx, new_spell)
-        self.close()
 
 
 class SpellSubQLabel(QLabel):
