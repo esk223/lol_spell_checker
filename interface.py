@@ -8,11 +8,12 @@ INITIAL_SPELL = ["flash", "flash", "flash", "flash", "flash", "teleport", "smite
 SPELL_LIST = ["flash", "ghost", "teleport", "smite", "ignite", "heal", "cleanse", "barrier", "exhaust"]
 
 
-class SpellCheckWidget(QWidget):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.spell_list = []
         self.rune_list = []
+        self.sub_window = None
         self.init_ui()
 
     def init_ui(self):
@@ -66,10 +67,14 @@ class SpellCheckWidget(QWidget):
         label.setPixmap(QPixmap('image/' + img_name))
         layout.addWidget(label, x, y, Qt.AlignCenter)
 
+    def open_sub_window(self, i):
+        self.sub_window = SubWindow(self, i)
+        # self.sub_window.show()
+
     def change_spell(self, i, new_spell):
-        old_spell = self.spell_list[i].current_spell()
+        old_spell = self.spell_list[i].get_spell()
         pair_spell_label = self.spell_list[(i+5) % 10]
-        if pair_spell_label.current_spell() == new_spell:
+        if pair_spell_label.get_spell() == new_spell:
             pair_spell_label.set_spell(old_spell)
         self.spell_list[i].set_spell(new_spell)
 
@@ -92,65 +97,67 @@ class RuneQLabel(QLabel):
 
 
 class SpellQLabel(QLabel):
-    def __init__(self, main_widget, idx, init_spell):
+    def __init__(self, main_window, idx, init_spell):
         super().__init__()
-        self.main_widget = main_widget
+        self.main_window = main_window
         self.idx = idx
-        self.setMouseTracking(True)
         self.set_spell(init_spell)
 
     def set_spell(self, spell):
         self.spell = spell
         self.setPixmap(QPixmap('image/spell/' + spell + '.png'))
 
-    def change_spell(self, new_spell):
-        self.main_widget.change_spell(self.idx, new_spell)
-
-    def mousePressEvent(self, event):
-        self.spell_window = SpellSelectWidget(self, event.globalX(), event.globalY())
-        self.spell_window.show()
-
-    def current_spell(self):
+    def get_spell(self):
         return self.spell
 
+    def mousePressEvent(self, event):
+        self.main_window.open_sub_window(self.idx)
 
-class SpellSelectWidget(QWidget):
-    def __init__(self, spell_qlabel, x, y):
+
+class SubWindow(QWidget):
+    def __init__(self, main_window, i):
         super().__init__()
-        self.spell_qlabel = spell_qlabel
-        self.init_ui(x, y)
+        self.main_window = main_window
+        self.idx = i
+        self.init_ui()
 
-    def init_ui(self, x, y):
+    def init_ui(self):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setFixedSize(160, 160)
         self.setStyleSheet("background-color: #34495E;")
-        self.move(x, y)
+        self.move_ui()
 
         grid = QGridLayout()
         self.setLayout(grid)
         for i in range(9):
-            spell_label = SpellSelectQLabel(self, SPELL_LIST[i])
-            grid.addWidget(spell_label, i//3, i%3, Qt.AlignCenter)
+            spell_label = SpellSubQLabel(self, SPELL_LIST[i])
+            grid.addWidget(spell_label, i // 3, i % 3, Qt.AlignCenter)
         self.show()
 
+    def move_ui(self):
+        main_pos = self.main_window.pos()
+        dx_list = [171, 278]
+        dy_list = [146, 217, 289, 360, 432]
+        self.move(main_pos.x() + dx_list[self.idx // 5], main_pos.y() + dy_list[self.idx % 5])
+
     def change_spell(self, new_spell):
-        self.spell_qlabel.change_spell(new_spell)
+        self.main_window.change_spell(self.idx, new_spell)
         self.close()
 
 
-class SpellSelectQLabel(QLabel):
-    def __init__(self, spell_widget, spell):
+class SpellSubQLabel(QLabel):
+    def __init__(self, sub_window, spell):
         super().__init__()
-        self.spell_widget = spell_widget
+        self.sub_window = sub_window
         self.spell = spell
         self.setPixmap(QPixmap('image/spell/' + spell + '.png'))
 
     def mousePressEvent(self, event):
-        self.spell_widget.change_spell(self.spell)
+        self.sub_window.change_spell(self.spell)
 
 
 if __name__ == "__main__":
     q_app = QApplication(sys.argv)
-    main_window = SpellCheckWidget()
+    main_window = MainWindow()
     main_window.show()
     sys.exit(q_app.exec_())
