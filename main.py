@@ -45,7 +45,3 @@ def handle_key_press(key):
 if __name__ == "__main__":
     with Listener(on_press=handle_key_press) as listener:
         listener.join()
-    q_app = QApplication(sys.argv)
-    main_window = SpellCheckWidget()
-    main_window.show()
-    sys.exit(q_app.exec_())
